@@ -1,4 +1,3 @@
-// models/vote.model.ts
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface IVote extends Document {
