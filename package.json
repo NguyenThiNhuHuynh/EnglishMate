@@ -13,6 +13,7 @@
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
+    "formidable": "^3.5.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
     "next": "15.4.6",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/cors": "^2.8.19",
+    "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",

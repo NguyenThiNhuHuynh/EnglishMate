@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 export type AskPostStatus = "pending" | "answered" | "closed";
 
 export interface CreateAskPostDTO {
-  content: string;
+  content: string | undefined;
   author: Types.ObjectId | string;
   tags?: string[];
   audioUrl?: string;
