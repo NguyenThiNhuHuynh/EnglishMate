@@ -40,4 +40,7 @@ const AskPostSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<IAskPost>("AskPost", AskPostSchema);
+const AskPost =
+  mongoose.models.AskPost || mongoose.model<IAskPost>("AskPost", AskPostSchema);
+
+export default AskPost;
