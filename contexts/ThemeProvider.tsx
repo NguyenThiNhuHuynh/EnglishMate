@@ -1,36 +1,38 @@
 "use client";
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface ThemeContextType {
-  mode: string;
-  setMode: (mode: string) => void;
+  mode: "light" | "dark";
+  setMode: (mode: "light" | "dark") => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState("");
+  const [mode, setMode] = useState<"light" | "dark">("light");
 
-  const handleThemeChange = () => {
-    if (
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-schema:dark)").matches)
-    ) {
-      setMode("dark");
-      document.documentElement.classList.add("dark");
-    } else {
-      setMode("light");
-      document.documentElement.classList.remove("dark");
+  const applyTheme = (theme: "light" | "dark") => {
+    if (typeof window !== "undefined") {
+      if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     }
   };
 
   useEffect(() => {
-    handleThemeChange();
-  }, [mode]);
+    const savedTheme =
+      (localStorage.getItem("theme") as "light" | "dark") || "light";
+    setMode(savedTheme);
+    applyTheme(savedTheme);
+  }, []);
 
-  console.log("MODE: ", mode);
+  // Lưu theme vào localStorage khi thay đổi
+  useEffect(() => {
+    applyTheme(mode);
+    localStorage.setItem("theme", mode);
+  }, [mode]);
 
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
@@ -38,12 +40,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     </ThemeContext.Provider>
   );
 }
+
 export function useTheme() {
   const context = useContext(ThemeContext);
-
   if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemProvider");
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
-
   return context;
 }

@@ -1,6 +1,7 @@
-@import url("../styles/theme.css");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap");
+
 @tailwind utilities;
 @import "tailwindcss";
 
@@ -9,20 +10,65 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --logo-font: "Jost", sans-serif;
+  --heading-font: "Josefin Sans", sans-serif;
 }
 
 body {
   font-family: "Montserrat", sans-serif;
+}
+
+.logo {
+  font-family: var(--logo-font);
+  font-weight: 600;
+}
+
+.logo2 {
+  font-family: var(--heading-font);
+  font-weight: 600;
+}
+
+@utility background-primary100 {
+  @apply bg-[#768D85];
+}
+
+@utility background-light100_dark100 {
+  @apply bg-[#1E2021] dark:bg-[#CFBFAD];
+}
+
+@utility background-light200_dark200 {
+  @apply bg-[#FFFFFF] dark:bg-[#252525];
+}
+
+@utility background-light300_dark300 {
+  @apply bg-[#BAC6C2] dark:bg-[#515E5A];
+}
+
+@utility background-light400_dark400 {
+  @apply bg-[#F1F4F3] dark:bg-[#2D2F2F];
+}
+
+@utility background-light500_dark500 {
+  @apply bg-[#FAFAFA] dark:bg-[#1E2021];
+}
+
+@utility text-primary100 {
+  @apply text-[#768D85];
+}
+
+@utility text-dark100_light100 {
+  @apply text-[#1E2021] dark:text-[#CFBFAD];
+}
+
+@utility text-dark300_light300 {
+  @apply text-[#BAC6C2] dark:text-[#515E5A];
+}
+
+@utility text-dark100_light200 {
+  @apply text-[#FFFFFF] dark:text-[#CFBFAD];
 }

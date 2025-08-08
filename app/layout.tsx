@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
@@ -17,19 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="" data-theme="light">
       <body className="relative">
-        {/* <ClerkProvider
-                  appearance={{
-                    elements: {
-                      formButtonPrimary: "primary-gradient",
-                      footerActionLink:
-                        "primary-gradient hover:text-primary-500",
-                    },
-                  }}
-                > */}
         <ThemeProvider>{children}</ThemeProvider>
-        {/* </ClerkProvider> */}
       </body>
     </html>
   );
