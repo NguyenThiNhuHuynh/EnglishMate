@@ -10,7 +10,6 @@ interface AskPostCardProps {
 const AskPostCard: React.FC<AskPostCardProps> = ({ post }) => {
   return (
     <CardContainer
-      key={post._id}
       className="text-dark100_light100 max-w-full sm:max-w-screen-lg mx-auto" // Đặt max-width để ngăn card mở rộng quá mức
     >
       <div className="flex items-center gap-3">

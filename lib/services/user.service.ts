@@ -106,3 +106,49 @@ export const fetchUser = async (setError: (msg: string) => void) => {
     setError("Failed to fetch user data");
   }
 };
+
+export async function uploadAvatar(formData: any, token: string | null) {
+  try {
+    const response = await fetch(`api/user/upload-avatar`, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Error upload avatar");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to upload avatar", err);
+  }
+}
+
+export async function updateUserBio(
+  params: { bio: string },
+  token: string | null
+) {
+  try {
+    const response = await fetch(`api/user/update-bio`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      body: JSON.stringify(params),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error update bio");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to update bio", err);
+  }
+}

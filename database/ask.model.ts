@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
+import "@/database/user.model";
 
 export interface IMedia {
   url: string;
