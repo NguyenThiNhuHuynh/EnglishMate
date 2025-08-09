@@ -4,8 +4,9 @@ export interface IComment extends Document {
   post: Types.ObjectId;
   user: Types.ObjectId;
   text: string;
-  upVotes: number;
-  downVotes: number;
+  media: string[];
+  upVotes: Types.ObjectId[];
+  downVotes: Types.ObjectId[];
 }
 
 const CommentSchema: Schema = new Schema(
@@ -13,10 +14,12 @@ const CommentSchema: Schema = new Schema(
     post: { type: Schema.Types.ObjectId, ref: "AskPost", required: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     text: { type: String, required: true },
-    upVotes: { type: Number, default: 0 },
-    downVotes: { type: Number, default: 0 },
+    media: { type: [String], default: [] },
+    upVotes: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
+    downVotes: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IComment>("Comment", CommentSchema);
+export default mongoose.models.Comment ||
+  mongoose.model<IComment>("Comment", CommentSchema);
