@@ -61,3 +61,49 @@ export async function createAskPost(
     throw error;
   }
 }
+
+export async function getAllAskPost(
+  page: number = 1,
+  limit: number = 10
+): Promise<{ posts: AskPostResponseDTO[]; total: number }> {
+  try {
+    await connectToDatabase();
+
+    const skip = (page - 1) * limit;
+
+    const [posts, total] = await Promise.all([
+      AskPost.find()
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: "author",
+          select: "_id firstName lastName avatar",
+        })
+        .sort({ createdAt: -1 }),
+      AskPost.countDocuments(),
+    ]);
+
+    const result: AskPostResponseDTO[] = posts.map((post) => ({
+      _id: post._id.toString(),
+      content: post.content,
+      fixedByAI: post.fixedByAI || undefined,
+      author: {
+        _id: post.author._id.toString(),
+        firstName: post.author.firstName,
+        lastName: post.author.lastName,
+        avatar: post.author.avatar,
+      },
+      tags: post.tags || [],
+      audioUrl: post.audioUrl || undefined,
+      media: (post.media || []).map((m: any) => m.url),
+      status: post.status,
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
+    }));
+
+    return { posts: result, total };
+  } catch (error) {
+    console.error("Error in getAllAskPost:", error);
+    throw error;
+  }
+}
