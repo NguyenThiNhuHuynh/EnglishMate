@@ -66,3 +66,35 @@ export async function createUserWithRole(
     return { success: false, message: "An unexpected error occurred." };
   }
 }
+
+export async function fetchUser(id: String | undefined) {
+  try {
+    connectToDatabase();
+    const user = await User.findById(id);
+
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+    const result: UserResponseDTO = {
+      _id: user._id.toString(),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      avatar: user.avatar,
+      bio: user.bio,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    return {
+      success: true,
+      userData: result,
+      message: `Fetch user successfully!`,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

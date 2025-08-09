@@ -17,7 +17,7 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({
   children,
   title,
-  color = "bg-primary-100",
+  color = "background-primary100",
   fontColor = "text-dark100_light200",
   border = "",
   size = "large",
