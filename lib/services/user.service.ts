@@ -1,6 +1,6 @@
 import { LoginDTO } from "@/dtos/user.dto";
 
-const handleLogin = async (
+export const handleLogin = async (
   { emailOrPhone, password }: LoginDTO,
   setError: (msg: string) => void
 ) => {
@@ -25,7 +25,84 @@ const handleLogin = async (
 
     console.log("Token:", data.token);
     console.log("Role:", data.role);
+    return data;
   } catch (err) {
     setError("Có lỗi xảy ra, vui lòng thử lại");
+  }
+};
+
+import { RegisterDTO } from "@/dtos/user.dto";
+
+export const handleRegister = async (
+  {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    password,
+    confirmPassword,
+  }: RegisterDTO,
+  setError: (msg: string) => void,
+  setSuccess: (msg: string) => void
+) => {
+  try {
+    const userData = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      password,
+      confirmPassword,
+      role: "student",
+    };
+
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.message);
+      return;
+    }
+
+    setSuccess("Registration successful! Redirecting...");
+    return data;
+  } catch (err) {
+    setError("Có lỗi xảy ra, vui lòng thử lại");
+  }
+};
+
+export const fetchUser = async (setError: (msg: string) => void) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    setError("You need to login first");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/user/fetch-user", {
+      method: "GET",
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.message);
+      return;
+    }
+
+    return data.userData;
+  } catch (error) {
+    setError("Failed to fetch user data");
   }
 };
