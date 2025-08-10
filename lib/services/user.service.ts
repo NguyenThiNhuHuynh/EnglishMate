@@ -107,9 +107,9 @@ export const fetchUser = async (setError: (msg: string) => void) => {
   }
 };
 
-export async function uploadAvatar(formData: any, token: string | null) {
+export async function uploadAvatar(formData: FormData, token: string | null) {
   try {
-    const response = await fetch(`api/user/upload-avatar`, {
+    const response = await fetch("/api/user/upload-avatar", {
       method: "POST",
       headers: {
         Authorization: `${token}`,
@@ -118,13 +118,13 @@ export async function uploadAvatar(formData: any, token: string | null) {
     });
 
     if (!response.ok) {
-      throw new Error("Error upload avatar");
+      throw new Error(await response.text());
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (err) {
     console.error("Failed to upload avatar", err);
+    throw err;
   }
 }
 
@@ -133,11 +133,11 @@ export async function updateUserBio(
   token: string | null
 ) {
   try {
-    const response = await fetch(`api/user/update-bio`, {
+    const response = await fetch(`/api/user/update-bio`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${token}`,
+        Authorization: token ? `${token}` : "",
       },
       body: JSON.stringify(params),
     });
@@ -146,8 +146,7 @@ export async function updateUserBio(
       throw new Error("Error update bio");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (err) {
     console.error("Failed to update bio", err);
   }

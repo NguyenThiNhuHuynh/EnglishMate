@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { uploadAvatar } from "@/lib/services/user.service";
+import Button from "../ui/button";
 
 const UploadAvatar = () => {
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -86,13 +87,9 @@ const UploadAvatar = () => {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && <p className="text-green-500 text-sm">{success}</p>}
 
-        <button
-          type="button"
-          className="bg-blue-500 text-white py-2 px-4 rounded-md"
-          onClick={handleButtonClick}
-        >
+        <Button title="Upload avatar" size="small" onClick={handleButtonClick}>
           {loading ? "Uploading..." : "Upload Avatar"}
-        </button>
+        </Button>
       </form>
     </div>
   );

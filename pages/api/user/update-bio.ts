@@ -1,34 +1,35 @@
-// import { UpdateUserBioDTO } from "@/dtos/UserDTO";
-// import { updateUserBio } from "@/lib/actions/user.action";
-// import corsMiddleware, {
-//   authenticateToken,
-// } from "@/middleware/auth-middleware";
-// import type { NextApiRequest, NextApiResponse } from "next";
+import { updateUserBio } from "@/lib/actions/user.acion";
+import corsMiddleware, {
+  authenticateToken,
+} from "@/middleware/auth-middleware";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse
-// ) {
-//   corsMiddleware(req, res, async () => {
-//     authenticateToken(req, res, async () => {
-//       if (req.method === "PATCH") {
-//         try {
-//           const params: UpdateUserBioDTO = req.body;
-//           const updatedUser = await updateUserBio(req.user?.id, params);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  return corsMiddleware(req, res, async () => {
+    return authenticateToken(req, res, async () => {
+      if (req.method !== "PATCH") {
+        res.setHeader("Allow", ["PATCH"]);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
+      }
 
-//           if (!updatedUser) {
-//             return res.status(404).json({ error: "User not found" });
-//           }
+      try {
+        const params: { bio: string } = req.body;
+        const userId = req.user?.id?.toString();
 
-//           res.status(200).json(updatedUser);
-//         } catch (error) {
-//           console.error(error);
-//           res.status(500).json({ error: "Internal Server Error" });
-//         }
-//       } else {
-//         res.setHeader("Allow", ["PATCH"]);
-//         res.status(405).end(`Method ${req.method} Not Allowed`);
-//       }
-//     });
-//   });
-// }
+        const updatedBio = await updateUserBio(userId, params);
+
+        if (!updatedBio) {
+          return res.status(404).json({ error: "User not found" });
+        }
+
+        return res.status(200).json(updatedBio);
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
+  });
+}
