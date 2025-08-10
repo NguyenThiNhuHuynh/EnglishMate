@@ -1,3 +1,5 @@
+import { AskPostResponseDTO } from "@/dtos/ask.dto";
+
 export const getAllAskPost = async (
   page: number = 1,
   limit: number = 10,
@@ -57,5 +59,28 @@ export const createAskPost = async (
     console.error("Error creating ask post:", error);
     setError("Failed to create ask post");
     setLoading(false);
+  }
+};
+
+export const getAskPostById = async (
+  id: string,
+  setError: (msg: string) => void
+): Promise<AskPostResponseDTO | undefined> => {
+  try {
+    const res = await fetch(`/api/ask/detail?id=${encodeURIComponent(id)}`, {
+      method: "GET",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.message || "Failed to fetch ask post");
+      return;
+    }
+
+    return data.post as AskPostResponseDTO;
+  } catch (error) {
+    console.error("Failed to fetch ask post by id:", error);
+    setError("Failed to fetch ask post");
   }
 };

@@ -72,3 +72,7 @@ body {
 @utility text-dark100_light200 {
   @apply text-[#FFFFFF] dark:text-[#CFBFAD];
 }
+
+@utility border-light400_dark400 {
+  @apply border-[#F1F4F3] dark:border-[#2D2F2F];
+}

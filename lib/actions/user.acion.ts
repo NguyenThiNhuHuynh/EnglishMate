@@ -128,60 +128,35 @@ export async function uploadAvatar(
   }
 }
 
-// export async function updateUserBio(
-//   userId: Schema.Types.ObjectId | undefined,
-//   params: UpdateUserBioDTO
-// ) {
-//   try {
-//     connectToDatabase();
+export async function updateUserBio(
+  userId: string | undefined,
+  params: { bio: string }
+) {
+  try {
+    await connectToDatabase();
 
-//     const existingUser = await User.findById(userId);
+    if (!userId) {
+      throw new Error("Unauthorized: missing user id");
+    }
 
-//     if (!existingUser) {
-//       throw new Error("User not found!");
-//     }
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      throw new Error("User not found!");
+    }
 
-//     const updatedUser = await User.findByIdAndUpdate(userId, params, {
-//       new: true,
-//     });
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { bio: params.bio } },
+      { new: true, projection: { bio: 1, _id: 0 } }
+    );
 
-//     const result: UserResponseDTO = {
-//       _id: updatedUser._id.toString(),
-//       firstName: updatedUser.firstName,
-//       lastName: updatedUser.lastName,
-//       nickName: updatedUser.nickName,
-//       phoneNumber: updatedUser.phoneNumber,
-//       email: updatedUser.email,
-//       role: updatedUser.role,
-//       avatar: updatedUser.avatar,
-//       background: updatedUser.background,
-//       gender: updatedUser.gender,
-//       address: updatedUser.address,
-//       job: updatedUser.job,
-//       hobbies: updatedUser.hobbies,
-//       bio: updatedUser.bio,
-//       point: updatedUser.point,
-//       relationShip: updatedUser.relationShip,
-//       birthDay: updatedUser.birthDay,
-//       attendDate: updatedUser.attendDate,
-//       flag: updatedUser.flag,
-//       // countReport: updatedUser.countReport,
-//       // friendIds: updatedUser.friendIds,
-//       // followingIds: updatedUser.followingIds,
-//       // followerIds: updatedUser.followerIds,
-//       // bestFriendIds: updatedUser.bestFriendIds,
-//       // blockedIds: updatedUser.blockedIds,
-//       // postIds: updatedUser.postIds,
-//       // createAt: updatedUser.createAt,
-//       // createBy: updatedUser.createBy,
-//       // status: updatedUser.status,
-//       // saveIds: updatedUser.saveIds,
-//       // likeIds: updatedUser.likeIds,
-//     };
+    if (!updatedUser) {
+      throw new Error("Update failed");
+    }
 
-//     return { status: true, newProfile: result };
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// }
+    return { status: true, bio: updatedUser.bio };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

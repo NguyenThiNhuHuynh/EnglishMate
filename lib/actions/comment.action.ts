@@ -2,8 +2,7 @@ import Comment, { IComment } from "@/database/comment.model";
 import { connectToDatabase } from "../mongoose";
 import { CreateCommentDTO, CommentResponseDTO } from "@/dtos/comment.dto";
 import mongoose from "mongoose";
-import { IUser } from "@/database/user.model"; // Assuming you have IUser model
-import { IAskPost } from "@/database/ask.model"; // Assuming you have IAskPost model
+import { IUser } from "@/database/user.model";
 
 export async function createComment(
   params: CreateCommentDTO
@@ -138,5 +137,74 @@ export async function deleteComment(
   } catch (error) {
     console.error("Error in deleteComment:", error);
     return { success: false, message: "An unexpected error occurred" };
+  }
+}
+
+import { Types } from "mongoose";
+
+export async function getCommentsByPost(
+  postId: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{
+  comments: CommentResponseDTO[];
+  total: number;
+  hasMore: boolean;
+}> {
+  try {
+    await connectToDatabase();
+
+    if (!postId || !Types.ObjectId.isValid(postId)) {
+      throw new Error("Invalid postId");
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [docs, total] = await Promise.all([
+      Comment.find({ post: postId })
+        .sort({ createdAt: 1 })
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: "user",
+          select: "_id firstName lastName avatar",
+        })
+        .lean(),
+      Comment.countDocuments({ post: postId }),
+    ]);
+
+    const comments: CommentResponseDTO[] = (docs as any[]).map((c) => ({
+      _id: c._id.toString(),
+      post: (c.post?._id ?? c.post)?.toString?.() || String(c.post),
+      text: c.text ?? "",
+      media: Array.isArray(c.media) ? c.media : [],
+      upVotes: Array.isArray(c.upVotes)
+        ? c.upVotes.map((id: any) => id.toString())
+        : [],
+      downVotes: Array.isArray(c.downVotes)
+        ? c.downVotes.map((id: any) => id.toString())
+        : [],
+      createdAt:
+        c.createdAt instanceof Date
+          ? c.createdAt.toISOString()
+          : String(c.createdAt),
+      updatedAt:
+        c.updatedAt instanceof Date
+          ? c.updatedAt.toISOString()
+          : String(c.updatedAt),
+      user: {
+        _id: c.user?._id?.toString() ?? "",
+        firstName: c.user?.firstName ?? "",
+        lastName: c.user?.lastName ?? "",
+        avatar: c.user?.avatar ?? "",
+      },
+    }));
+
+    const hasMore = skip + comments.length < total;
+
+    return { comments, total, hasMore };
+  } catch (error) {
+    console.error("Error in getCommentsByPost:", error);
+    throw error;
   }
 }
