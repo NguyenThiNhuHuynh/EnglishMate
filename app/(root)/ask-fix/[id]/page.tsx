@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import AskPostCard from "@/components/card/AskPostCard";
 import { getAskPostById } from "@/lib/services/ask.service";
 import { getCommentsByPost } from "@/lib/services/comment.service";
 import {
@@ -17,6 +16,7 @@ import Button from "@/components/ui/button";
 import CommentCard from "@/components/card/CommentCard";
 import CommentForm from "@/components/form/CommentForm";
 import { fetchUser } from "@/lib/services/user.service";
+import DetailAskPostCard from "@/components/card/DetailAskPostCard";
 
 export default function AskFixDetailPage() {
   const { id }: any = useParams<{ id: string }>();
@@ -197,7 +197,7 @@ export default function AskFixDetailPage() {
 
       {post && (
         <div className="lg:w-1/2 w-full flex flex-col gap-5">
-          <AskPostCard post={post} />
+          <DetailAskPostCard post={post} />
         </div>
       )}
 
