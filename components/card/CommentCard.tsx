@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { CommentResponseDTO } from "@/dtos/comment.dto";
 import MediaGrid from "@/components/shared/other/MediaGrid";
 import { cn } from "@/lib/utils";
 import { ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
+import Tag from "../ui/tag";
 
 interface CommentCardProps {
   comment: CommentResponseDTO;
   currentUserId?: string;
+  currentUserRole?: string;
   onVote?: (id: string, action: "upvote" | "downvote") => void;
   onDelete?: (id: string) => void;
   className?: string;
@@ -17,10 +19,19 @@ interface CommentCardProps {
 const CommentCard: React.FC<CommentCardProps> = ({
   comment,
   currentUserId,
+  currentUserRole,
   onVote,
   onDelete,
   className,
 }) => {
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  useEffect(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    setIsAuthed(!!token);
+  }, []);
+
   const youUpvoted = useMemo(
     () => !!currentUserId && (comment.upVotes ?? []).includes(currentUserId),
     [comment.upVotes, currentUserId]
@@ -33,6 +44,29 @@ const CommentCard: React.FC<CommentCardProps> = ({
 
   const canDelete = currentUserId === comment.user._id;
 
+  const requireAuth = () => {
+    if (!isAuthed) {
+      alert("You must be logged in to perform this action.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleUpvote = () => {
+    if (!requireAuth()) return;
+    if (!youUpvoted) onVote?.(comment._id, "upvote");
+  };
+
+  const handleDownvote = () => {
+    if (!requireAuth()) return;
+    if (!youDownvoted) onVote?.(comment._id, "downvote");
+  };
+
+  const handleDelete = () => {
+    if (!requireAuth()) return;
+    onDelete?.(comment._id);
+  };
+
   return (
     <div
       className={cn(
@@ -40,7 +74,6 @@ const CommentCard: React.FC<CommentCardProps> = ({
         className
       )}
     >
-      {/* Header */}
       <div className="flex items-center gap-3">
         <img
           src={comment.user.avatar || "/default-avatar.png"}
@@ -48,26 +81,27 @@ const CommentCard: React.FC<CommentCardProps> = ({
           className="w-8 h-8 rounded-full object-cover"
         />
         <div className="min-w-0">
-          <p className="text-sm font-medium truncate">
-            {comment.user.firstName} {comment.user.lastName}
-          </p>
+          <div className="text-sm font-medium truncate flex items-center gap-2">
+            <span className="truncate">
+              {comment.user.firstName} {comment.user.lastName}
+            </span>
+            {currentUserRole && <Tag content={currentUserRole} />}
+          </div>
           <p className="text-xs text-dark300_light300">
             {new Date(comment.createdAt).toLocaleString()}
           </p>
         </div>
 
-        {/* Actions */}
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
-            onClick={() => !youUpvoted && onVote?.(comment._id, "upvote")}
+            onClick={handleUpvote}
             className={cn(
               "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs",
               youUpvoted
                 ? "border-primary-100 text-primary-100"
                 : "border-border-100 text-dark300_light300 hover:opacity-80"
             )}
-            disabled={youUpvoted}
             aria-label="Upvote"
             title={youUpvoted ? "You upvoted" : "Upvote"}
           >
@@ -77,14 +111,13 @@ const CommentCard: React.FC<CommentCardProps> = ({
 
           <button
             type="button"
-            onClick={() => !youDownvoted && onVote?.(comment._id, "downvote")}
+            onClick={handleDownvote}
             className={cn(
               "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs",
               youDownvoted
                 ? "border-red-500 text-red-500"
                 : "border-border-100 text-dark300_light300 hover:opacity-80"
             )}
-            disabled={youDownvoted}
             aria-label="Downvote"
             title={youDownvoted ? "You downvoted" : "Downvote"}
           >
@@ -95,7 +128,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
           {canDelete && (
             <button
               type="button"
-              onClick={() => onDelete?.(comment._id)}
+              onClick={handleDelete}
               className="inline-flex items-center gap-1 rounded-full border border-border-100 px-2 py-1 text-xs text-dark300_light300 hover:opacity-80"
               aria-label="Delete comment"
               title="Delete comment"
@@ -107,10 +140,8 @@ const CommentCard: React.FC<CommentCardProps> = ({
         </div>
       </div>
 
-      {/* Text */}
       {comment.text && <p className="mt-2 text-sm">{comment.text}</p>}
 
-      {/* Media */}
       {Array.isArray(comment.media) && comment.media.length > 0 && (
         <MediaGrid
           images={comment.media}

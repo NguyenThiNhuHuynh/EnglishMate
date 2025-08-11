@@ -20,13 +20,9 @@ const Page = () => {
   );
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
-  // Chặn gọi fetch trùng
   const isFetchingRef = useRef(false);
-  // Chặn fetch lần đầu bị lặp (do StrictMode dev)
   const didLoadFirstPageRef = useRef(false);
 
-  // Lấy user hiện tại
   useEffect(() => {
     (async () => {
       const u = await fetchUser(() => {});
@@ -48,20 +44,17 @@ const Page = () => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
     setLoading(true);
-
     try {
       if (page === 1 && didLoadFirstPageRef.current) {
         setLoading(false);
         isFetchingRef.current = false;
         return;
       }
-
       const data = await getAllAskPost(page, 10, setError);
       if (data) {
         setPosts((prev) => mergeUniqueById(prev, data.posts));
         setTotal(data.total);
       }
-
       if (page === 1) didLoadFirstPageRef.current = true;
     } finally {
       setLoading(false);
@@ -84,7 +77,6 @@ const Page = () => {
       },
       { rootMargin: "200px" }
     );
-
     const el = loadMoreRef.current;
     if (el) observer.observe(el);
     return () => {
@@ -93,13 +85,11 @@ const Page = () => {
     };
   }, [loading, posts.length, total]);
 
-  // Gọi sau khi tạo post thành công
   const handleCreated = useCallback(() => {
     setPosts([]);
     setTotal(0);
     setError("");
     didLoadFirstPageRef.current = false;
-
     if (page === 1) {
       fetchPosts();
     } else {
@@ -107,32 +97,46 @@ const Page = () => {
     }
   }, [page, fetchPosts]);
 
-  // Gọi sau khi xoá post thành công
   const handleDeleted = useCallback((postId: string) => {
     setPosts((prev) => prev.filter((p) => p._id !== postId));
     setTotal((t) => Math.max(t - 1, 0));
   }, []);
 
+  const handleOpenCreate = () => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) {
+      setError("You must be logged in to create a post.");
+      return;
+    }
+    setError("");
+    setIsModalOpen(true);
+  };
+
   if (loading && page === 1 && posts.length === 0) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
+  if (error && !isModalOpen) {
+    return (
+      <PageContainer>
+        <div className="text-red-500">{error}</div>
+      </PageContainer>
+    );
   }
 
   return (
     <PageContainer>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center pt-8 md:pt-0">
         <h1 className="text-xl font-bold text-dark100_light100">Ask Posts</h1>
-        <Button
-          title="Add Post"
-          size="small"
-          onClick={() => setIsModalOpen(true)}
-        />
+        <Button title="Add Post" size="small" onClick={handleOpenCreate} />
       </div>
 
-      <div className="lg:w-1/2 w-full flex flex-col gap-5">
+      {error && isModalOpen === false && (
+        <div className="text-red-500 mt-2">{error}</div>
+      )}
+
+      <div className="lg:w-1/2 w-full flex flex-col gap-5 mx-auto">
         {posts.map((post) => (
           <AskPostCard
             key={post._id}

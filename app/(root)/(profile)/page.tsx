@@ -8,18 +8,27 @@ import { UserResponseDTO } from "@/dtos/user.dto";
 import { fetchUser, updateUserBio } from "@/lib/services/user.service";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
+
   const [user, setUser] = useState<UserResponseDTO | null>(null);
   const [error, setError] = useState("");
   const [showEditBio, setShowEditBio] = useState(false);
+  const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    const getUserData = async () => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const ok = !!token;
+    setHasToken(ok);
+
+    if (!ok) return; // no token -> show login button
+    (async () => {
       const userData = await fetchUser(setError);
       if (userData) setUser(userData);
-    };
-    getUserData();
+    })();
   }, []);
 
   const openEdit = () => setShowEditBio(true);
@@ -40,12 +49,40 @@ const Page = () => {
     }
   };
 
+  const handleLogout = () => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+      }
+      setUser(null);
+      setHasToken(false);
+      router.push("/sign-in");
+    } catch (e) {
+      console.error("Logout error:", e);
+    }
+  };
+
+  if (!hasToken) {
+    return (
+      <PageContainer className="text-dark100_light100">
+        <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4">
+          <p className="text-lg">You are not logged in.</p>
+          <Button
+            title="Log In"
+            size="small"
+            onClick={() => router.push("/sign-in")}
+          />
+        </div>
+      </PageContainer>
+    );
+  }
+
   if (error) return <div className="text-red-500">{error}</div>;
   if (!user) return <div>Loading...</div>;
 
   return (
     <PageContainer className="text-dark100_light100">
-      <div className="lg:flex lg:justify-between lg:mt-0 sm:mt-5">
+      <div className="lg:flex lg:justify-between pt-8 md:pt-0">
         <div className="flex flex-col gap-6">
           <div className="flex gap-5 items-center">
             <h1 className="text-2xl font-bold">
@@ -58,8 +95,8 @@ const Page = () => {
 
           <div className="flex-shrink-0 w-full gap-5 lg:w-2/3 flex items-center">
             <UploadAvatar />
-            <div>
-              <div className="flex">
+            <div className="w-full">
+              <div className="flex items-center gap-2">
                 <p className="text-lg font-semibold">Bio</p>
                 <button
                   className="p-[7px] ml-auto w-fit background-light400_dark400 rounded-full"
@@ -82,9 +119,9 @@ const Page = () => {
             <p>Phone: {user.phoneNumber}</p>
           </div>
         </div>
+
         <div>
-          {" "}
-          <Button title="Log Out" size="small" />
+          <Button title="Log Out" size="small" onClick={handleLogout} />
         </div>
       </div>
 
