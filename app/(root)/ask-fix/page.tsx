@@ -5,6 +5,7 @@ import CreateAskPost from "@/components/form/CreateAskPost";
 import Button from "@/components/ui/button";
 import { AskPostResponseDTO } from "@/dtos/ask.dto";
 import { getAllAskPost } from "@/lib/services/ask.service";
+import { fetchUser } from "@/lib/services/user.service";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 
 const Page = () => {
@@ -14,6 +15,9 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>(
+    undefined
+  );
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,12 +26,19 @@ const Page = () => {
   // Chặn fetch lần đầu bị lặp (do StrictMode dev)
   const didLoadFirstPageRef = useRef(false);
 
+  // Lấy user hiện tại
+  useEffect(() => {
+    (async () => {
+      const u = await fetchUser(() => {});
+      if (u?._id) setCurrentUserId(u._id);
+    })();
+  }, []);
+
   const mergeUniqueById = (
     prev: AskPostResponseDTO[],
     next: AskPostResponseDTO[]
   ) => {
     const map = new Map<string, AskPostResponseDTO>();
-    // Ưu tiên giữ thứ tự cũ, sau đó thêm cái mới nếu chưa có
     for (const p of prev) map.set(p._id, p);
     for (const p of next) if (!map.has(p._id)) map.set(p._id, p);
     return Array.from(map.values());
@@ -39,7 +50,6 @@ const Page = () => {
     setLoading(true);
 
     try {
-      // Nếu là lần đầu và đã từng tải page=1 rồi thì bỏ qua (StrictMode)
       if (page === 1 && didLoadFirstPageRef.current) {
         setLoading(false);
         isFetchingRef.current = false;
@@ -83,6 +93,26 @@ const Page = () => {
     };
   }, [loading, posts.length, total]);
 
+  // Gọi sau khi tạo post thành công
+  const handleCreated = useCallback(() => {
+    setPosts([]);
+    setTotal(0);
+    setError("");
+    didLoadFirstPageRef.current = false;
+
+    if (page === 1) {
+      fetchPosts();
+    } else {
+      setPage(1);
+    }
+  }, [page, fetchPosts]);
+
+  // Gọi sau khi xoá post thành công
+  const handleDeleted = useCallback((postId: string) => {
+    setPosts((prev) => prev.filter((p) => p._id !== postId));
+    setTotal((t) => Math.max(t - 1, 0));
+  }, []);
+
   if (loading && page === 1 && posts.length === 0) {
     return <div>Loading...</div>;
   }
@@ -104,7 +134,12 @@ const Page = () => {
 
       <div className="lg:w-1/2 w-full flex flex-col gap-5">
         {posts.map((post) => (
-          <AskPostCard key={post._id} post={post} />
+          <AskPostCard
+            key={post._id}
+            post={post}
+            currentUserId={currentUserId}
+            onDeleted={handleDeleted}
+          />
         ))}
       </div>
 
@@ -114,7 +149,12 @@ const Page = () => {
 
       <div ref={loadMoreRef} />
 
-      {isModalOpen && <CreateAskPost onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <CreateAskPost
+          onClose={() => setIsModalOpen(false)}
+          onCreated={handleCreated}
+        />
+      )}
     </PageContainer>
   );
 };
