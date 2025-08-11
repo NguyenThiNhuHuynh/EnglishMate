@@ -1,8 +1,8 @@
 import AskPost, { IAskPost } from "@/database/ask.model";
 import { connectToDatabase } from "../mongoose";
-import User from "@/database/user.model";
 import { AskPostResponseDTO, CreateAskPostDTO } from "@/dtos/ask.dto";
 import mongoose, { Types } from "mongoose";
+import commentModel from "@/database/comment.model";
 
 export async function createAskPost(
   params: CreateAskPostDTO
@@ -61,52 +61,6 @@ export async function createAskPost(
     throw error;
   }
 }
-
-// export async function getAllAskPost(
-//   page: number = 1,
-//   limit: number = 10
-// ): Promise<{ posts: AskPostResponseDTO[]; total: number }> {
-//   try {
-//     await connectToDatabase();
-
-//     const skip = (page - 1) * limit;
-
-//     const [posts, total] = await Promise.all([
-//       AskPost.find()
-//         .skip(skip)
-//         .limit(limit)
-//         .populate({
-//           path: "author",
-//           select: "_id firstName lastName avatar",
-//         })
-//         .sort({ createdAt: -1 }),
-//       AskPost.countDocuments(),
-//     ]);
-
-//     const result: AskPostResponseDTO[] = posts.map((post) => ({
-//       _id: post._id.toString(),
-//       content: post.content,
-//       fixedByAI: post.fixedByAI || undefined,
-//       author: {
-//         _id: post.author._id.toString(),
-//         firstName: post.author.firstName,
-//         lastName: post.author.lastName,
-//         avatar: post.author.avatar,
-//       },
-//       tags: post.tags || [],
-//       audioUrl: post.audioUrl || undefined,
-//       media: (post.media || []).map((m: any) => m.url),
-//       status: post.status,
-//       createdAt: post.createdAt.toISOString(),
-//       updatedAt: post.updatedAt.toISOString(),
-//     }));
-
-//     return { posts: result, total };
-//   } catch (error) {
-//     console.error("Error in getAllAskPost:", error);
-//     throw error;
-//   }
-// }
 
 export async function getAllAskPost(
   page: number = 1,
@@ -201,7 +155,6 @@ export async function getAskPostById(
     const [doc] = await AskPost.aggregate([
       { $match: { _id: new Types.ObjectId(id) } },
 
-      // Join tác giả
       {
         $lookup: {
           from: "users",
@@ -212,7 +165,6 @@ export async function getAskPostById(
       },
       { $unwind: "$author" },
 
-      // Đếm comment
       {
         $lookup: {
           from: "comments",
@@ -223,7 +175,6 @@ export async function getAskPostById(
       },
       { $addFields: { commentCount: { $size: "$comments" } } },
 
-      // Ẩn trường không cần thiết
       {
         $project: {
           comments: 0,
@@ -231,7 +182,6 @@ export async function getAskPostById(
           "author.email": 0,
         },
       },
-      // (không cần $limit vì match 1 id)
     ]);
 
     if (!doc) throw new Error("Post not found");
@@ -259,7 +209,6 @@ export async function getAskPostById(
           ? doc.updatedAt.toISOString()
           : String(doc.updatedAt),
 
-      // bổ sung cho thống nhất với getAll
       commentCount: typeof doc.commentCount === "number" ? doc.commentCount : 0,
     };
 
@@ -267,5 +216,43 @@ export async function getAskPostById(
   } catch (err) {
     console.error("Error in getAskPostById:", err);
     throw err;
+  }
+}
+
+export async function deleteAskPost(
+  userId: string | undefined,
+  postId: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    await connectToDatabase();
+
+    if (!userId) {
+      return { success: false, message: "Unauthorized: missing user id" };
+    }
+    if (!postId || !Types.ObjectId.isValid(postId)) {
+      return { success: false, message: "Invalid postId" };
+    }
+
+    const post = await AskPost.findById(postId);
+    if (!post) {
+      return { success: false, message: "Post not found" };
+    }
+
+    if (post.author.toString() !== userId) {
+      return {
+        success: false,
+        message: "You are not authorized to delete this post",
+      };
+    }
+
+    await Promise.all([
+      commentModel.deleteMany({ post: postId }),
+      AskPost.deleteOne({ _id: postId }),
+    ]);
+
+    return { success: true, message: "Post deleted successfully" };
+  } catch (error) {
+    console.error("Error in deleteAskPost:", error);
+    return { success: false, message: "An unexpected error occurred" };
   }
 }

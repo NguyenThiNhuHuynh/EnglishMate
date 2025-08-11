@@ -27,7 +27,7 @@ export const createAskPost = async (
   setError: (msg: string) => void
 ) => {
   try {
-    setLoading(true); // Bắt đầu loading
+    setLoading(true);
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -36,11 +36,10 @@ export const createAskPost = async (
       return;
     }
 
-    // Gửi yêu cầu POST với FormData
     const res = await fetch("/api/ask/create", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
       body: data,
     });
@@ -53,7 +52,7 @@ export const createAskPost = async (
       return;
     }
 
-    setLoading(false); // Kết thúc loading
+    setLoading(false);
     return responseData;
   } catch (error) {
     console.error("Error creating ask post:", error);
@@ -82,5 +81,48 @@ export const getAskPostById = async (
   } catch (error) {
     console.error("Failed to fetch ask post by id:", error);
     setError("Failed to fetch ask post");
+  }
+};
+
+export const deleteAskPost = async (
+  postId: string,
+  setError: (msg: string) => void,
+  setLoading?: (loading: boolean) => void
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    setLoading?.(true);
+
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) {
+      setLoading?.(false);
+      return { success: false, message: "Authentication is required" };
+    }
+
+    const res = await fetch("/api/ask/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      body: JSON.stringify({ postId }),
+    });
+
+    const data = await res.json();
+    setLoading?.(false);
+
+    if (!res.ok) {
+      setError(data?.message || "Failed to delete ask post");
+      return {
+        success: false,
+        message: data?.message || "Failed to delete ask post",
+      };
+    }
+
+    return { success: true, message: data?.message || "Post deleted" };
+  } catch (err) {
+    console.error("Failed to delete ask post", err);
+    setLoading?.(false);
+    return { success: false, message: "Failed to delete ask post" };
   }
 };
