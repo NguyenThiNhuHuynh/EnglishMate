@@ -97,9 +97,8 @@ const CreateAskPost: React.FC<CreateAskPostProps> = ({
     const res = await createAskPost(form, setLoading, setError);
     if (res) {
       onClose();
-      onCreated?.(); // ✅ báo parent refetch
-      router.refresh(); // ✅ refresh route (App Router)
-      // Nếu muốn hard reload: window.location.reload();
+      onCreated?.();
+      router.refresh();
     }
   };
 
@@ -180,7 +179,7 @@ const CreateAskPost: React.FC<CreateAskPostProps> = ({
               <button
                 type="button"
                 onClick={triggerPicker}
-                className="inline-flex items-center gap-2 rounded-md border border-border-100 px-3 py-1.5 text-sm hover:opacity-80"
+                className="inline-flex items-center gap-2 rounded-md border border-light400_dark400 text-dark100_light100 px-3 py-1.5 text-sm hover:opacity-80"
               >
                 <Paperclip className="w-4 h-4" />
                 Attach

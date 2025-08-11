@@ -34,6 +34,9 @@ export default function AskFixDetailPage() {
   const [currentUserId, setCurrentUserId] = useState<string | undefined>(
     undefined
   );
+  const [currentUserRole, setCurrentUserRole] = useState<string | undefined>(
+    undefined
+  );
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const isFetchingRef = useRef(false);
@@ -42,6 +45,7 @@ export default function AskFixDetailPage() {
     (async () => {
       const u = await fetchUser(() => {});
       if (u?._id) setCurrentUserId(u._id);
+      if (u?.role) setCurrentUserRole(u.role);
     })();
   }, []);
 
@@ -192,7 +196,7 @@ export default function AskFixDetailPage() {
       </div>
 
       {post && (
-        <div className="mt-2">
+        <div className="lg:w-1/2 w-full flex flex-col gap-5">
           <AskPostCard post={post} />
         </div>
       )}
@@ -208,6 +212,7 @@ export default function AskFixDetailPage() {
             key={c._id}
             comment={c}
             currentUserId={currentUserId}
+            currentUserRole={currentUserRole}
             onDelete={handleDelete}
             onVote={handleVote}
           />
