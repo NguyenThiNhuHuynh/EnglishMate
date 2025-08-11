@@ -1,17 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { AskPostResponseDTO } from "@/dtos/ask.dto";
 import CardContainer from "../container/cardContainer";
 import Tag from "../ui/tag";
 import { MessageSquare } from "lucide-react";
 import MediaGrid from "../shared/other/MediaGrid";
+import { aiFixAskPost } from "@/lib/services/ai-history.service";
+import Button from "../ui/button";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface AskPostCardProps {
   post: AskPostResponseDTO & { commentCount?: number };
 }
 
 const DetailAskPostCard: React.FC<AskPostCardProps> = ({ post }) => {
+  const [fixedText, setFixedText] = useState<string>(post.fixedByAI ?? "");
+  const [fixing, setFixing] = useState(false);
+  const [err, setErr] = useState("");
+
+  const handleAIFix = async () => {
+    setErr("");
+    const res = await aiFixAskPost(
+      post._id,
+      (m) => setErr(m),
+      (b) => setFixing(b)
+    );
+    if (res?.fixedPost?.fixedByAI) {
+      setFixedText(res.fixedPost.fixedByAI);
+    }
+  };
+
   return (
     <CardContainer className="text-dark100_light100 max-w-full sm:max-w-screen-lg mx-auto">
       <div className="flex items-center gap-3">
@@ -36,6 +55,26 @@ const DetailAskPostCard: React.FC<AskPostCardProps> = ({ post }) => {
         <MediaGrid images={post.media} idKey={post._id} singleAspect="video" />
       )}
 
+      <div className="mt-3 text-dark100_light100">
+        {fixedText ? (
+          <div className="border border-light400_dark400 rounded-lg p-3">
+            <p className="text-sm font-semibold text-primary-100">AI FIX</p>
+            <p className="mt-1 whitespace-pre-wrap">{fixedText}</p>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleAIFix}
+              disabled={fixing}
+              title={fixing ? "Fixing..." : "Ask AI to fix"}
+              size="small"
+            />
+
+            {err && <span className="text-red-500 text-sm">{err}</span>}
+          </div>
+        )}
+      </div>
+
       <div className="mt-2 flex items-center gap-4 text-sm">
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
@@ -52,8 +91,8 @@ const DetailAskPostCard: React.FC<AskPostCardProps> = ({ post }) => {
           </audio>
         )}
 
-        <div className="ml-auto flex items-center gap-1 text-dark300_light300">
-          <MessageSquare className="w-4 h-4" />
+        <div className="ml-auto flex items-center gap-1 text-dark100_light100">
+          <Icon icon="iconamoon:comment" className="size-[24px]" />
           <span>{post.commentCount ?? 0}</span>
         </div>
       </div>
