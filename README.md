@@ -120,8 +120,8 @@ Triển khai: Vercel
 ├── styles/ (theme.css)
 ├── .env.example                            # Mẫu ENV (không chứa secret)
 ├── tailwind.config.js / postcss.config.mjs / tsconfig.json / …
-└── README.md ```
-
+└── README.md 
+```
 ---------------------------------------------------------------
 
 🧠 Responsive (Tailwind)
