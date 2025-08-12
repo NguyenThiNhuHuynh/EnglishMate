@@ -30,9 +30,9 @@ EnglishMate cho phép người học:
    - Dark/ Light mode.
 
    - Sidebar responsive:
-      + lg: đầy đủ logo + menu
-      + md: chỉ hiện icon
-      + mobile: ẩn mặc định, mở bằng nút menu.
+      + lg (desktop/laptop): ≥1024px
+      + md (tablet): ≥768px
+      + mobile: < 768px
 
  * Bảo mật
    - JWT token (lưu localStorage), middleware xác thực trên API.
