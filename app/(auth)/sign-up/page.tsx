@@ -46,7 +46,7 @@ const SignUp = () => {
     <div className="background-light500_dark500 flex h-screen w-full items-center justify-center">
       <div className="background-light200_dark200 w-[500px] rounded-lg p-10 shadow-md flex flex-col gap-8">
         <div>
-          <p className="text-dark100_light100 text-center text-[32px] font-semibold">
+          <p className="text-dark100_light100 text-center text-[32px] md:text-[48px] font-semibold">
             Sign up
           </p>
           <p className="text-dark100_light100 text-center text-4 font-normal">
@@ -122,7 +122,7 @@ const SignUp = () => {
         )}
 
         <div className="mt-6 text-center">
-          <p className="text-dark100_light100 text-sm">
+          <p className="text-dark100_light100 text-[12px] md:text-4">
             Already have an account?{" "}
             <a
               href="/sign-in"

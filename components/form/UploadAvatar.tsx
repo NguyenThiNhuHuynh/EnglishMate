@@ -1,39 +1,43 @@
+"use client";
+
 import React, { useState, useRef } from "react";
 import { uploadAvatar } from "@/lib/services/user.service";
 import Button from "../ui/button";
 
-const UploadAvatar = () => {
-  const [avatar, setAvatar] = useState<File | null>(null);
+type UploadAvatarProps = {
+  avatarUrl?: string;
+  onUploaded?: (url: string) => void;
+};
+
+const UploadAvatar: React.FC<UploadAvatarProps> = ({
+  avatarUrl,
+  onUploaded,
+}) => {
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setAvatar(e.target.files[0]);
-      setError("");
+  const pickFile = () => fileInputRef.current?.click();
 
-      handleSubmit(e);
-    }
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+    setError("");
+    setSuccess("");
+
+    await doUpload(f);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!avatar) {
-      setError("Please select an image to upload.");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    const formData = new FormData();
-    formData.append("file", avatar);
-
+  const doUpload = async (f: File) => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       if (!token) {
         setError("You need to be logged in to upload an avatar.");
@@ -41,56 +45,64 @@ const UploadAvatar = () => {
         return;
       }
 
-      const response = await uploadAvatar(formData, token); // Gọi service uploadAvatar
+      const formData = new FormData();
+      formData.append("file", f);
 
-      if (response) {
+      const res = await uploadAvatar(formData, token);
+      // Tùy API trả về trường nào
+      const url =
+        (res as any)?.avatar ||
+        (res as any)?.avatarUrl ||
+        (res as any)?.url ||
+        "";
+
+      if (url) {
         setSuccess("Avatar uploaded successfully!");
-        setLoading(false);
+        onUploaded?.(url);
+      } else {
+        setSuccess("Uploaded. Please refresh to see the new avatar.");
       }
     } catch (err) {
       console.error("Error uploading avatar:", err);
       setError("Failed to upload avatar.");
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
+  const displaySrc = preview || avatarUrl || "/default-avatar.png";
 
   return (
     <div>
       <div className="flex justify-center mb-4">
         <div className="relative">
           <img
-            src={
-              avatar
-                ? URL.createObjectURL(avatar)
-                : "https://i.pinimg.com/1200x/08/a8/e9/08a8e9475d2c4ed2e9862742200395db.jpg" // Ảnh mặc định
-            }
+            src={displaySrc}
             alt="Avatar"
             className="w-32 h-32 rounded-full object-cover border-4 border-gray-300"
           />
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="text-center">
+      <div className="text-center">
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className="mb-4 hidden"
+          className="hidden"
         />
+
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && <p className="text-green-500 text-sm">{success}</p>}
 
-        <Button title="Upload avatar" size="small" onClick={handleButtonClick}>
-          {loading ? "Uploading..." : "Upload Avatar"}
-        </Button>
-      </form>
+        <Button
+          title={loading ? "Uploading..." : "Upload Avatar"}
+          size="small"
+          onClick={pickFile}
+          disabled={loading}
+        />
+      </div>
     </div>
   );
 };

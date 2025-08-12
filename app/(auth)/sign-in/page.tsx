@@ -15,12 +15,11 @@ const SignIn = () => {
   const handleLoginSubmit = async () => {
     const result = await handleLogin(
       { emailOrPhone: phoneNumberOrEmail, password },
-      (errorMsg) => setErrorMessage(errorMsg) // Cập nhật thông báo lỗi
+      (errorMsg) => setErrorMessage(errorMsg)
     );
 
     if (result) {
-      // Nếu đăng nhập thành công, chuyển hướng
-      router.push("/"); // Chuyển hướng đến trang chủ hoặc trang yêu cầu
+      router.push("/");
     }
   };
 
@@ -28,7 +27,7 @@ const SignIn = () => {
     <div className="background-light500_dark500 flex h-screen w-full items-center justify-center">
       <div className="background-light200_dark200 my-[110px] w-[540px] rounded-lg p-12 shadow-md flex flex-col gap-8">
         <div>
-          <p className="text-dark100_light100 text-center text-[48px] font-medium">
+          <p className="text-dark100_light100 text-center text-[32px] md:text-[48px]  font-medium">
             Welcome Back !
           </p>
           <p className="text-dark100_light100 text-center text-4 font-normal">
@@ -68,7 +67,7 @@ const SignIn = () => {
           <Button title="Sign In" size="large" onClick={handleLoginSubmit} />
 
           <div className="text-center">
-            <p className="text-dark100_light100 text-4 font-nomal">
+            <p className="text-dark100_light100 text-[12px] md:text-4 font-nomal">
               You don&apos;t have an account yet ?{" "}
               <a
                 href="/sign-up"

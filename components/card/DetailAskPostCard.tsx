@@ -32,7 +32,7 @@ const DetailAskPostCard: React.FC<AskPostCardProps> = ({ post }) => {
   };
 
   return (
-    <CardContainer className="text-dark100_light100 max-w-full sm:max-w-screen-lg mx-auto">
+    <CardContainer className="text-dark100_light100 w-full sm:max-w-screen-lg mx-auto">
       <div className="flex items-center gap-3">
         <img
           src={post.author.avatar || "/default-avatar.png"}

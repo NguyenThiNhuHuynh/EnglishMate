@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
 
-          <div className="px-4 hidden lg:block mx-auto">
+          <div className="px-4 block mx-auto">
             <Theme />
           </div>
 

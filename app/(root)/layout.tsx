@@ -34,7 +34,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         )}
       >
         <section className="background-light500_dark500 flex-1 flex flex-col">
-          <div className="background-light500_dark500 mx-auto size-full p-4">
+          <div className="background-light500_dark500 mx-auto size-full p-6">
             {children}
           </div>
         </section>
