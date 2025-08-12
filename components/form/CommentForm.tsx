@@ -27,7 +27,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
     const picked = e.target.files ? Array.from(e.target.files) : [];
     if (picked.length === 0) return;
 
-    // Gộp, tránh trùng (theo name+size+lastModified)
     setFiles((prev) => {
       const map = new Map<string, File>();
       [...prev, ...picked].forEach((f) => {
@@ -40,7 +39,6 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
   const removeFile = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
     if (fileRef.current && files.length === 1) {
-      // clear input khi không còn file
       fileRef.current.value = "";
     }
   };
@@ -54,7 +52,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payloadText = text.trim();
-    if (!payloadText && files.length === 0) return; // tránh submit rỗng
+    if (!payloadText && files.length === 0) return;
 
     await onSubmit({ text: payloadText, files });
     setText("");
@@ -73,10 +71,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
         onChange={(e) => setText(e.target.value)}
       />
 
-      {/* Actions row */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          {/* Hidden input + trigger button */}
           <input
             ref={fileRef}
             type="file"
@@ -88,7 +84,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
           <button
             type="button"
             onClick={triggerPicker}
-            className="inline-flex items-center gap-2 rounded-md border border-border-100 px-3 py-1.5 text-sm hover:opacity-80"
+            className="inline-flex items-center gap-2 rounded-md border border-light400_dark400 px-3 py-1.5 text-sm hover:opacity-80"
             aria-label="Attach files"
             title="Attach files"
           >
@@ -101,11 +97,10 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
           title={loading ? "Posting..." : "Post"}
           size="small"
           disabled={loading}
-          type="submit" // quan trọng để form submit
+          type="submit"
         />
       </div>
 
-      {/* File chips with icons */}
       {files.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-1">
           {files.map((f, i) => {
@@ -120,7 +115,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ loading, onSubmit }) => {
             return (
               <div
                 key={`${f.name}-${f.lastModified}-${i}`}
-                className="group flex items-center gap-2 rounded-full border border-border-100 bg-transparent px-2 py-1"
+                className="group flex items-center gap-2 rounded-full border border-light400_dark400 bg-transparent px-2 py-1"
               >
                 <Icon className="w-4 h-4 text-dark300_light300" />
                 <span className="max-w-[160px] truncate text-xs">{f.name}</span>

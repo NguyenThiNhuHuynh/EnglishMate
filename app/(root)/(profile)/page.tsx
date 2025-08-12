@@ -24,7 +24,7 @@ const Page = () => {
     const ok = !!token;
     setHasToken(ok);
 
-    if (!ok) return; // no token -> show login button
+    if (!ok) return;
     (async () => {
       const userData = await fetchUser(setError);
       if (userData) setUser(userData);
@@ -36,16 +36,12 @@ const Page = () => {
   const handleSaveBio = async (newBio: string) => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!token) {
-      console.log("Invalid token");
-      return;
-    }
+    if (!token) return;
+
     const res = await updateUserBio({ bio: newBio }, token);
     if (res?.status) {
       setUser((prev) => (prev ? { ...prev, bio: res.bio } : prev));
       setShowEditBio(false);
-    } else {
-      console.error("Failed to update user information");
     }
   };
 
@@ -94,7 +90,14 @@ const Page = () => {
           </div>
 
           <div className="flex-shrink-0 w-full gap-5 lg:w-2/3 flex items-center">
-            <UploadAvatar />
+            {/* Truyền avatar hiện tại và cập nhật state khi upload xong */}
+            <UploadAvatar
+              avatarUrl={user.avatar || ""}
+              onUploaded={(url) =>
+                setUser((prev) => (prev ? { ...prev, avatar: url } : prev))
+              }
+            />
+
             <div className="w-full">
               <div className="flex items-center gap-2">
                 <p className="text-lg font-semibold">Bio</p>
@@ -120,7 +123,7 @@ const Page = () => {
           </div>
         </div>
 
-        <div>
+        <div className="lg:mt-0 mt-5">
           <Button title="Log Out" size="small" onClick={handleLogout} />
         </div>
       </div>
