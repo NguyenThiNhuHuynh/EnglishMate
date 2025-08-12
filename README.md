@@ -4,8 +4,6 @@ Xây dựng với Next.js App Router, MongoDB, Cloudinary, JWT Auth – giao di�
 
 <p align="left"> <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" /> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" /> <img alt="Tailwind" src="https://img.shields.io/badge/TailwindCSS-3-38B2AC?logo=tailwindcss&logoColor=white" /> <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white" /> <img alt="Vercel" src="https://img.shields.io/badge/Deployed%20on-Vercel-000000?logo=vercel" /> </p>
 
----------------------------------------------------------------
-
 ✨ Tính năng nổi bật
 📝 Ask Fix feed
 Tạo bài viết (FormData), upload nhiều ảnh/video qua Cloudinary.
@@ -25,8 +23,6 @@ Upload avatar, cập nhật bio, gắn nhãn vai trò (student/…).
 
 Đăng nhập/đăng xuất bằng JWT.
 
----------------------------------------------------------------
-
 🌓 Giao diện & Responsive
 Dark/Light mode.
 Sidebar responsive:
@@ -34,14 +30,10 @@ lg (desktop/laptop): ≥ 1024px
 md (tablet): ≥ 768px
 mobile: < 768px
 
----------------------------------------------------------------
-
 🧩 Công nghệ
 Frontend: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, Lucide, Iconify
 Backend (API Routes): Next.js API, Mongoose/MongoDB, Formidable, Cloudinary SDK, Google Generative AI (Gemini)
 Triển khai: Vercel
-
----------------------------------------------------------------
 
 📂 Cấu trúc thư mục (rút gọn, có nhóm)
 ```├── app/                                    # App Router: routes + layouts + API
@@ -122,7 +114,6 @@ Triển khai: Vercel
 ├── tailwind.config.js / postcss.config.mjs / tsconfig.json / …
 └── README.md 
 ```
----------------------------------------------------------------
 
 🧠 Responsive (Tailwind)
 Thiết bị	Breakpoint	Ghi chú
@@ -130,9 +121,8 @@ Mobile	< md (<768px)	Không prefix
 Tablet	md (≥768px)	md:*
 Desktop	lg (≥1024px)	lg:*
 
----------------------------------------------------------------
-
 🔐 Biến môi trường
+```
 Tạo .env.local (và commit .env.example để team dễ setup):
 # Database
 MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
@@ -151,10 +141,10 @@ GEMINI_API_KEY=xxxx
 # Optional
 CORS_ORIGIN=https://your-domain.com
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-
----------------------------------------------------------------
+```
 
 ⚙️ Cài đặt & Chạy
+```
 # 1) Cài deps
 npm install
 
@@ -166,10 +156,10 @@ npm run dev      # http://localhost:3000
 # Production
 npm run build
 npm start
-
----------------------------------------------------------------
+```
 
 🔌 API (tóm tắt)
+```
 Ask
 POST /api/ask/create — (auth, FormData: content, tags[], media[])
 GET /api/ask/all?page=&limit=
@@ -185,11 +175,10 @@ POST /api/comment/up-down-vote — (auth, JSON { commentId, action })
 AI Fix
 POST /api/ai/fix?id=<askPostId> — (auth) → { fixedPost, aiHistory }
 Lưu ý: API upload dùng Formidable → khi gửi FormData không tự set Content-Type.
+```
 
 🌐 Deploy
 Vercel: https://english-mate-kappa.vercel.app/
-
----------------------------------------------------------------
 
 🔮 Định hướng mở rộng
 Phân quyền nâng cao (moderator/admin).
@@ -198,14 +187,12 @@ Gamification: điểm thưởng, huy hiệu, bảng xếp hạng contributors.
 Tìm kiếm toàn văn (posts/comments).
 NextAuth/OAuth2; rate limit; audit logs.
 
----------------------------------------------------------------
-
 📄 License
 Dự án phát triển bởi Nguyễn Thị Như Huỳnh.
 
----------------------------------------------------------------
-
 📬 Liên hệ
+```
 👩‍💻 Developer: Nguyễn Thị Như Huỳnh
 ✉️ Email: huynh04137@gmail.com
 🐙 GitHub: https://github.com/NguyenThiNhuHuynh
+```
