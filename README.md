@@ -5,6 +5,7 @@ Xây dựng với Next.js App Router, MongoDB, Cloudinary, JWT Auth – giao di�
 <p align="left"> <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" /> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" /> <img alt="Tailwind" src="https://img.shields.io/badge/TailwindCSS-3-38B2AC?logo=tailwindcss&logoColor=white" /> <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white" /> <img alt="Vercel" src="https://img.shields.io/badge/Deployed%20on-Vercel-000000?logo=vercel" /> </p>
 
 ✨ Tính năng nổi bật
+```
 📝 Ask Fix feed
 Tạo bài viết (FormData), upload nhiều ảnh/video qua Cloudinary.
 Xóa bài (chỉ chủ bài viết).
@@ -20,20 +21,24 @@ Gọi POST /api/ai/fix?id=... để nhận bản sửa tự động (AI FIX).
 
 👤 Hồ sơ người dùng
 Upload avatar, cập nhật bio, gắn nhãn vai trò (student/…).
-
 Đăng nhập/đăng xuất bằng JWT.
+```
 
 🌓 Giao diện & Responsive
+```
 Dark/Light mode.
 Sidebar responsive:
 lg (desktop/laptop): ≥ 1024px
 md (tablet): ≥ 768px
 mobile: < 768px
+```
 
 🧩 Công nghệ
+```
 Frontend: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, Lucide, Iconify
 Backend (API Routes): Next.js API, Mongoose/MongoDB, Formidable, Cloudinary SDK, Google Generative AI (Gemini)
 Triển khai: Vercel
+```
 
 📂 Cấu trúc thư mục (rút gọn, có nhóm)
 ```├── app/                                    # App Router: routes + layouts + API
@@ -116,10 +121,12 @@ Triển khai: Vercel
 ```
 
 🧠 Responsive (Tailwind)
+```
 Thiết bị	Breakpoint	Ghi chú
 Mobile	< md (<768px)	Không prefix
 Tablet	md (≥768px)	md:*
 Desktop	lg (≥1024px)	lg:*
+```
 
 🔐 Biến môi trường
 ```
@@ -178,17 +185,23 @@ Lưu ý: API upload dùng Formidable → khi gửi FormData không tự set Cont
 ```
 
 🌐 Deploy
+```
 Vercel: https://english-mate-kappa.vercel.app/
+```
 
 🔮 Định hướng mở rộng
+```
 Phân quyền nâng cao (moderator/admin).
 Thông báo real-time (new comment / AI-fix xong).
 Gamification: điểm thưởng, huy hiệu, bảng xếp hạng contributors.
 Tìm kiếm toàn văn (posts/comments).
 NextAuth/OAuth2; rate limit; audit logs.
+```
 
 📄 License
+```
 Dự án phát triển bởi Nguyễn Thị Như Huỳnh.
+```
 
 📬 Liên hệ
 ```
