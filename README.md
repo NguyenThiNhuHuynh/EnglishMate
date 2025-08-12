@@ -44,7 +44,7 @@ Triển khai: Vercel
 ---------------------------------------------------------------
 
 📂 Cấu trúc thư mục (rút gọn, có nhóm)
-├── app/                                    # App Router: routes + layouts + API
+```├── app/                                    # App Router: routes + layouts + API
 │   ├── (root)/
 │   │   ├── page.tsx                        # Trang Profile (bio, avatar…)
 │   │   └── layout.tsx                      # Layout chung (Sidebar/Theme)
@@ -120,14 +120,15 @@ Triển khai: Vercel
 ├── styles/ (theme.css)
 ├── .env.example                            # Mẫu ENV (không chứa secret)
 ├── tailwind.config.js / postcss.config.mjs / tsconfig.json / …
-└── README.md
+└── README.md ```
+
+---------------------------------------------------------------
+
 🧠 Responsive (Tailwind)
 Thiết bị	Breakpoint	Ghi chú
 Mobile	< md (<768px)	Không prefix
 Tablet	md (≥768px)	md:*
 Desktop	lg (≥1024px)	lg:*
-
-Ví dụ: p-3 md:p-5 lg:p-8 → mobile p-3, tablet p-5, desktop p-8.
 
 ---------------------------------------------------------------
 
