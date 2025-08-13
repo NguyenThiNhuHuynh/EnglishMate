@@ -130,7 +130,7 @@ Desktop	lg (≥1024px)	lg:*
 
 🔐 Biến môi trường
 ```
-Tạo .env.local (và commit .env.example để team dễ setup):
+Tạo .env.local:
 # Database
 MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
 
@@ -155,7 +155,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # 1) Cài deps
 npm install
 
-# 2) Tạo .env.local (dựa trên .env.example)
+# 2) Tạo .env.local
 
 # 3) Chạy dev
 npm run dev      # http://localhost:3000
