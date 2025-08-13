@@ -2,7 +2,7 @@ EnglishMate
 Nền tảng Ask & Fix cho tiếng Anh: đăng bài nhờ sửa, thảo luận theo bình luận, và sửa tự động bằng AI (Gemini).
 Xây dựng với Next.js App Router, MongoDB, Cloudinary, JWT Auth – giao diện Dark/Light + sidebar responsive.
 
-<p align="left"> <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" /> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" /> <img alt="Tailwind" src="https://img.shields.io/badge/TailwindCSS-3-38B2AC?logo=tailwindcss&logoColor=white" /> <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white" /> <img alt="Vercel" src="https://img.shields.io/badge/Deployed%20on-Vercel-000000?logo=vercel" /> </p>
+<p align="left"> <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" /> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" /> <img alt="Tailwind" src="https://img.shields.io/badge/TailwindCSS-4-38B2AC?logo=tailwindcss&logoColor=white" /> <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white" /> <img alt="Vercel" src="https://img.shields.io/badge/Deployed%20on-Vercel-000000?logo=vercel" /> </p>
 
 ✨ Tính năng nổi bật
 ```
@@ -27,6 +27,7 @@ Upload avatar, cập nhật bio, gắn nhãn vai trò (student/…).
 🌓 Giao diện & Responsive
 ```
 Dark/Light mode.
+
 Sidebar responsive:
 lg (desktop/laptop): ≥ 1024px
 md (tablet): ≥ 768px
@@ -115,14 +116,13 @@ Triển khai: Vercel
 │
 ├── public/ (default-avatar.png, logos…)
 ├── styles/ (theme.css)
-├── .env.example                            # Mẫu ENV (không chứa secret)
+├── .env.example                            
 ├── tailwind.config.js / postcss.config.mjs / tsconfig.json / …
 └── README.md 
 ```
 
 🧠 Responsive (Tailwind)
 ```
-Thiết bị	Breakpoint	Ghi chú
 Mobile	< md (<768px)	Không prefix
 Tablet	md (≥768px)	md:*
 Desktop	lg (≥1024px)	lg:*
@@ -187,6 +187,9 @@ Lưu ý: API upload dùng Formidable → khi gửi FormData không tự set Cont
 🌐 Deploy
 ```
 Vercel: https://english-mate-kappa.vercel.app/
+Account:
+   * Student: phone number: 0987654321 | password: 123456
+   * Teacher: phone number: 0123456789 | password: 123456
 ```
 
 🔮 Định hướng mở rộng
